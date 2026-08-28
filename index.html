@@ -1,0 +1,2793 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AgentShield</title>
+
+    <style>
+        /* =========================================================
+           AGENTSHIELD — WARM SECURITY LAB
+        ========================================================= */
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --paper: #f5f0e7;
+            --paper-light: #fbf9f4;
+            --paper-dark: #ebe4d7;
+
+            --ink: #292b28;
+            --muted: #7c7b72;
+            --faint: #aaa69b;
+
+            --line: #d9d2c5;
+            --line-dark: #c9c1b2;
+
+            --sage: #829b83;
+            --sage-light: #dce8dc;
+            --sage-dark: #4f6d53;
+
+            --coral: #c98278;
+            --coral-light: #f0d9d5;
+            --coral-dark: #9b5149;
+
+            --lavender: #9b91ae;
+            --lavender-light: #e6e1ed;
+
+            --blue: #8299a7;
+            --blue-light: #dce6eb;
+
+            --yellow: #d5b56c;
+
+            --shadow: 0 8px 30px rgba(70, 63, 51, 0.06);
+        }
+
+
+        /* =========================================================
+           BASE
+        ========================================================= */
+
+        body {
+            min-height: 100vh;
+            background: var(--paper);
+            color: var(--ink);
+            font-family:
+                Inter,
+                ui-sans-serif,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            padding: 28px 42px 45px;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+
+            background-image:
+                linear-gradient(rgba(70, 65, 55, 0.035) 1px,
+                    transparent 1px),
+                linear-gradient(90deg,
+                    rgba(70, 65, 55, 0.035) 1px,
+                    transparent 1px);
+
+            background-size: 32px 32px;
+
+            mask-image:
+                linear-gradient(to bottom,
+                    rgba(0, 0, 0, 0.8),
+                    transparent 80%);
+
+            z-index: -1;
+        }
+
+        button,
+        select {
+            font-family: inherit;
+        }
+
+
+        /* =========================================================
+           HEADER
+        ========================================================= */
+
+        .topbar {
+            max-width: 1320px;
+            margin: 0 auto 30px;
+
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+
+            gap: 30px;
+        }
+
+        .brand-area {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+
+            background: var(--ink);
+            color: var(--paper-light);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 11px 11px 11px 4px;
+
+            font-size: 19px;
+            font-weight: 700;
+
+            box-shadow: 4px 4px 0 var(--lavender-light);
+        }
+
+        .eyebrow {
+            color: var(--muted);
+            font-size: 9px;
+            letter-spacing: 2.4px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        h1 {
+            font-family: Georgia, "Times New Roman", serif;
+
+            font-size: 31px;
+            line-height: 1;
+
+            font-weight: 500;
+            letter-spacing: -1px;
+
+            color: var(--ink);
+        }
+
+        .description {
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 7px;
+        }
+
+        .run-controls {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .model-select {
+            height: 40px;
+
+            background: var(--paper-light);
+            color: var(--ink);
+
+            border: 1px solid var(--line-dark);
+            border-radius: 9px;
+
+            padding: 0 34px 0 13px;
+
+            font-size: 11px;
+            cursor: pointer;
+
+            outline: none;
+        }
+
+        .model-select:focus {
+            border-color: var(--lavender);
+        }
+
+        .run-button {
+            height: 40px;
+
+            border: 0;
+            border-radius: 9px;
+
+            background: var(--ink);
+            color: #fffdf8;
+
+            padding: 0 17px;
+
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.2s ease,
+                background 0.2s ease;
+        }
+
+        .run-button:hover {
+            transform: translateY(-2px);
+            background: #3c3e39;
+        }
+
+        .run-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+
+        /* =========================================================
+           MAIN
+        ========================================================= */
+
+        .page {
+            max-width: 1320px;
+            margin: 0 auto;
+        }
+
+
+        /* =========================================================
+           ROBOT JOURNEY
+        ========================================================= */
+
+        .journey {
+            position: relative;
+
+            background: var(--paper-light);
+
+            border: 1px solid var(--line);
+
+            border-radius: 20px;
+
+            padding: 28px 34px 25px;
+
+            margin-bottom: 18px;
+
+            box-shadow: var(--shadow);
+
+            overflow: hidden;
+        }
+
+        .journey::after {
+            content: "";
+
+            position: absolute;
+
+            width: 230px;
+            height: 230px;
+
+            right: -100px;
+            top: -130px;
+
+            border-radius: 50%;
+
+            background: var(--lavender-light);
+
+            opacity: 0.55;
+
+            pointer-events: none;
+        }
+
+        .journey-top {
+            position: relative;
+            z-index: 2;
+
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+
+            margin-bottom: 35px;
+        }
+
+        .journey-title {
+            font-family: Georgia, "Times New Roman", serif;
+
+            font-size: 21px;
+            font-weight: 500;
+
+            letter-spacing: -0.4px;
+        }
+
+        .journey-subtitle {
+            color: var(--muted);
+
+            font-size: 10px;
+            line-height: 1.6;
+
+            margin-top: 5px;
+        }
+
+        .journey-status {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+
+            color: var(--muted);
+
+            font-size: 9px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: var(--sage);
+
+            box-shadow: 0 0 0 4px var(--sage-light);
+        }
+
+
+        /* TRACK */
+
+        .level-track {
+            position: relative;
+
+            display: flex;
+            align-items: flex-start;
+
+            justify-content: space-between;
+
+            padding: 0 12px;
+
+            min-height: 91px;
+        }
+
+        .track-line {
+            position: absolute;
+
+            left: 45px;
+            right: 45px;
+
+            top: 23px;
+
+            height: 3px;
+
+            background: var(--paper-dark);
+
+            border-radius: 10px;
+
+            z-index: 0;
+        }
+
+        .track-line-fill {
+            position: absolute;
+
+            left: 45px;
+
+            top: 23px;
+
+            height: 3px;
+
+            width: 0%;
+
+            background: var(--sage);
+
+            border-radius: 10px;
+
+            transition: width 0.7s cubic-bezier(.22, .61, .36, 1);
+
+            z-index: 1;
+        }
+
+        .level-step {
+            position: relative;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            width: 70px;
+
+            z-index: 3;
+        }
+
+        .level-dot {
+            width: 47px;
+            height: 47px;
+
+            border-radius: 50%;
+
+            background: var(--paper);
+
+            border: 2px solid var(--line-dark);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: var(--faint);
+
+            font-size: 10px;
+            font-weight: 700;
+
+            position: relative;
+
+            transition:
+                background 0.35s ease,
+                border-color 0.35s ease,
+                transform 0.35s ease,
+                box-shadow 0.35s ease;
+        }
+
+        .level-dot span:first-child {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* robot */
+
+        .agent-icon {
+            position: absolute;
+
+            top: -34px;
+            left: 50%;
+
+            transform: translateX(-50%) translateY(7px);
+
+            display: none;
+
+            font-size: 27px;
+
+            filter:
+                drop-shadow(0 5px 4px rgba(60, 55, 45, 0.14));
+
+            transition:
+                transform 0.5s ease;
+        }
+
+        .level-dot.active .agent-icon {
+            display: block;
+
+            animation:
+                robotFloat 1.8s ease-in-out infinite;
+        }
+
+        @keyframes robotFloat {
+
+            0%,
+            100% {
+                transform:
+                    translateX(-50%) translateY(4px) rotate(-2deg);
+            }
+
+            50% {
+                transform:
+                    translateX(-50%) translateY(-3px) rotate(2deg);
+            }
+        }
+
+        /* active */
+
+        .level-dot.active {
+            border-color: #8B5CF6;
+            background: #6D28D9;
+            color: #FFFFFF;
+            box-shadow: 0 0 22px rgba(139, 92, 246, 0.55);
+            transform: scale(1.12);
+        }
+
+        .level-dot.pass {
+            border-color: #22C55E;
+            background: #15803D;
+            color: #FFFFFF;
+            box-shadow: 0 0 18px rgba(34, 197, 94, 0.45);
+        }
+
+        .level-dot.pass::after {
+            content: "✓";
+
+            position: absolute;
+
+            right: -2px;
+            bottom: -2px;
+
+            width: 17px;
+            height: 17px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: var(--sage);
+            color: white;
+
+            font-size: 9px;
+            font-weight: 700;
+
+            border: 2px solid var(--paper-light);
+        }
+
+        /* failed */
+
+        .level-dot.fail {
+            border-color: #EF4444;
+            background: #B91C1C;
+            color: #FFFFFF;
+            box-shadow: 0 0 18px rgba(239, 68, 68, 0.45);
+        }
+
+        .level-dot.fail::after {
+            content: "×";
+
+            position: absolute;
+
+            right: -2px;
+            bottom: -2px;
+
+            width: 17px;
+            height: 17px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: var(--coral);
+            color: white;
+
+            font-size: 11px;
+            font-weight: 700;
+
+            border: 2px solid var(--paper-light);
+        }
+
+        .level-label {
+            margin-top: 9px;
+
+            color: var(--faint);
+
+            font-size: 8px;
+            font-weight: 600;
+
+            letter-spacing: 1px;
+        }
+
+        .level-dot.pass+.level-label {
+            color: var(--sage-dark);
+        }
+
+        .level-dot.fail+.level-label {
+            color: var(--coral-dark);
+        }
+
+
+        /* =========================================================
+           TOP STAT ROW
+        ========================================================= */
+
+        .hero {
+            display: grid;
+
+            grid-template-columns: 1.35fr 0.65fr;
+
+            gap: 18px;
+
+            margin-bottom: 18px;
+        }
+
+        .panel {
+            background: var(--paper-light);
+
+            border: 1px solid var(--line);
+
+            border-radius: 16px;
+
+            box-shadow: var(--shadow);
+        }
+
+
+        /* SCORE */
+
+        .score-panel {
+            min-height: 185px;
+
+            padding: 25px 28px;
+
+            position: relative;
+
+            overflow: hidden;
+        }
+
+        .score-panel::before {
+            content: "";
+
+            position: absolute;
+
+            width: 180px;
+            height: 180px;
+
+            right: -55px;
+            bottom: -110px;
+
+            border-radius: 50%;
+
+            border: 22px solid var(--sage-light);
+
+            opacity: 0.6;
+        }
+
+        .section-label {
+            color: var(--muted);
+
+            font-size: 8px;
+            font-weight: 700;
+
+            letter-spacing: 1.8px;
+
+            text-transform: uppercase;
+        }
+
+        .score-area {
+            display: flex;
+
+            align-items: center;
+
+            gap: 28px;
+
+            margin-top: 23px;
+        }
+
+        .score {
+            font-family: Georgia, "Times New Roman", serif;
+
+            font-size: 67px;
+            line-height: 0.8;
+
+            font-weight: 500;
+
+            letter-spacing: -4px;
+
+            color: var(--ink);
+        }
+
+        .score-symbol {
+            font-family: Georgia, "Times New Roman", serif;
+
+            font-size: 22px;
+
+            color: var(--muted);
+
+            margin-left: 3px;
+        }
+
+        .score-info {
+            border-left: 1px solid var(--line);
+
+            padding-left: 22px;
+        }
+
+        .score-status {
+            font-size: 11px;
+
+            color: var(--sage-dark);
+
+            font-weight: 600;
+
+            margin-bottom: 6px;
+        }
+
+        .score-note {
+            color: var(--muted);
+
+            font-size: 10px;
+
+            line-height: 1.55;
+
+            max-width: 250px;
+        }
+
+        .progress {
+            position: absolute;
+
+            left: 28px;
+            right: 28px;
+            bottom: 19px;
+
+            height: 4px;
+
+            background: var(--paper-dark);
+
+            border-radius: 10px;
+
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+
+            background: var(--sage);
+
+            border-radius: 10px;
+
+            transition: width 0.7s ease;
+        }
+
+
+        /* SUMMARY */
+
+        .summary-panel {
+            padding: 25px 26px;
+        }
+
+        .summary-grid {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            margin-top: 17px;
+        }
+
+        .summary-item {
+            padding: 13px 12px;
+
+            border-top: 1px solid var(--line);
+        }
+
+        .summary-item:nth-child(odd) {
+            border-right: 1px solid var(--line);
+        }
+
+        .summary-value {
+            font-family: Georgia, "Times New Roman", serif;
+
+            font-size: 25px;
+
+            font-weight: 500;
+
+            color: var(--ink);
+        }
+
+        .summary-value.pass {
+            color: var(--sage-dark);
+        }
+
+        .summary-value.fail {
+            color: var(--coral-dark);
+        }
+
+        .summary-name {
+            margin-top: 4px;
+
+            color: var(--faint);
+
+            font-size: 7px;
+
+            font-weight: 700;
+
+            letter-spacing: 1.4px;
+        }
+
+
+        /* =========================================================
+           MIDDLE
+        ========================================================= */
+
+        .middle {
+            display: grid;
+
+            grid-template-columns: 0.9fr 1.1fr;
+
+            gap: 18px;
+
+            margin-bottom: 18px;
+        }
+
+
+        /* SCENARIO */
+
+        .scenario-panel {
+            min-height: 285px;
+
+            padding: 25px;
+
+            position: relative;
+        }
+
+        .scenario-number {
+            float: right;
+
+            color: var(--faint);
+
+            font-size: 9px;
+
+            letter-spacing: 1px;
+        }
+
+        .scenario-title {
+            font-family: Georgia, "Times New Roman", serif;
+
+            font-size: 26px;
+
+            line-height: 1.15;
+
+            letter-spacing: -0.7px;
+
+            margin-top: 36px;
+
+            max-width: 430px;
+        }
+
+        .difficulty {
+            display: inline-block;
+
+            margin-top: 12px;
+
+            padding: 5px 9px;
+
+            border-radius: 20px;
+
+            background: var(--lavender-light);
+
+            color: #6e657c;
+
+            font-size: 8px;
+
+            font-weight: 700;
+
+            letter-spacing: 1px;
+
+            text-transform: uppercase;
+        }
+
+        .tags {
+            margin-top: 22px;
+        }
+
+        .tag {
+            display: inline-block;
+
+            padding: 6px 9px;
+
+            margin: 0 5px 5px 0;
+
+            border-radius: 7px;
+
+            background: var(--paper);
+
+            border: 1px solid var(--line);
+
+            color: var(--muted);
+
+            font-size: 8px;
+        }
+
+        .scenario-result {
+            margin-top: 22px;
+
+            padding-top: 17px;
+
+            border-top: 1px solid var(--line);
+        }
+
+        .result-text {
+            font-size: 12px;
+
+            font-weight: 600;
+
+            color: var(--muted);
+        }
+
+        .result-text.pass {
+            color: var(--sage-dark);
+        }
+
+        .result-text.fail {
+            color: var(--coral-dark);
+        }
+
+
+        /* =========================================================
+           TRACE
+        ========================================================= */
+
+        .trace-panel {
+            min-height: 285px;
+
+            overflow: hidden;
+        }
+
+        .trace-header {
+            height: 52px;
+
+            padding: 0 20px;
+
+            border-bottom: 1px solid var(--line);
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .trace-live {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+
+            color: var(--sage-dark);
+
+            font-size: 8px;
+
+            letter-spacing: 1px;
+
+            text-transform: uppercase;
+        }
+
+        .trace-live::before {
+            content: "";
+
+            width: 6px;
+            height: 6px;
+
+            border-radius: 50%;
+
+            background: var(--sage);
+
+            animation: pulse 1.7s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.35;
+            }
+        }
+
+        .trace {
+            height: 232px;
+
+            overflow-y: auto;
+
+            padding: 5px 0;
+
+            font-family:
+                "SFMono-Regular",
+                Consolas,
+                "Liberation Mono",
+                monospace;
+
+            font-size: 9px;
+        }
+
+        .trace::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .trace::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .trace::-webkit-scrollbar-thumb {
+            background: var(--line-dark);
+
+            border-radius: 10px;
+        }
+
+        .trace-line {
+            display: flex;
+
+            padding: 8px 20px;
+
+            border-bottom: 1px solid #eee9df;
+
+            color: var(--muted);
+
+            transition: background 0.15s ease;
+        }
+
+        .trace-line:hover {
+            background: #f6f2ea;
+        }
+
+        .trace-time {
+            color: var(--faint);
+
+            min-width: 68px;
+
+            margin-right: 10px;
+        }
+
+        .trace-event {
+            color: #66675f;
+        }
+
+
+        /* =========================================================
+           RESULTS
+        ========================================================= */
+
+        .results-panel {
+            padding: 23px 25px;
+
+            margin-bottom: 18px;
+        }
+
+        .results-header {
+            display: flex;
+
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 15px;
+        }
+
+        .results-count {
+            color: var(--faint);
+
+            font-size: 9px;
+        }
+
+        .results-table {
+            width: 100%;
+
+            border-collapse: collapse;
+        }
+
+        .results-table th {
+            text-align: left;
+
+            color: var(--faint);
+
+            font-size: 7px;
+
+            letter-spacing: 1.5px;
+
+            font-weight: 700;
+
+            padding: 9px 8px;
+
+            border-bottom: 1px solid var(--line);
+        }
+
+        .results-table td {
+            padding: 12px 8px;
+
+            border-bottom: 1px solid #ebe6dd;
+
+            font-size: 10px;
+
+            color: var(--muted);
+        }
+
+        .results-table td:first-child {
+            color: var(--ink);
+
+            font-weight: 500;
+        }
+
+        .status-pass {
+            color: var(--sage-dark) !important;
+
+            font-weight: 700;
+        }
+
+        .status-fail {
+            color: var(--coral-dark) !important;
+
+            font-weight: 700;
+        }
+
+
+        /* =========================================================
+           CATEGORY BREAKDOWN
+        ========================================================= */
+
+        .category-panel {
+            padding: 23px 25px;
+
+            margin-bottom: 22px;
+        }
+
+        .category-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fit, minmax(160px, 1fr));
+
+            gap: 14px;
+
+            margin-top: 16px;
+        }
+
+        .category-item {
+            padding: 14px;
+
+            background: var(--paper);
+
+            border: 1px solid var(--line);
+
+            border-radius: 11px;
+        }
+
+        .category-name {
+            color: var(--muted);
+
+            font-size: 8px;
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+        }
+
+        .category-rate {
+            font-family: Georgia, "Times New Roman", serif;
+
+            font-size: 24px;
+
+            margin: 5px 0 8px;
+        }
+
+        .category-bar {
+            height: 4px;
+
+            background: var(--paper-dark);
+
+            border-radius: 10px;
+
+            overflow: hidden;
+        }
+
+        .category-bar-fill {
+            height: 100%;
+
+            border-radius: 10px;
+
+            transition: width 0.7s ease;
+        }
+
+        .category-detail {
+            font-size: 8px;
+
+            color: var(--faint);
+
+            margin-top: 6px;
+        }
+
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+
+        .footer {
+            max-width: 1320px;
+
+            margin: 0 auto;
+
+            padding-top: 15px;
+
+            border-top: 1px solid var(--line);
+
+            display: flex;
+
+            justify-content: space-between;
+
+            color: var(--faint);
+
+            font-size: 8px;
+
+            letter-spacing: 0.9px;
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media (max-width: 950px) {
+
+            body {
+                padding: 22px 18px 35px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+            .run-controls {
+                width: 100%;
+            }
+
+            .model-select {
+                flex: 1;
+            }
+
+            .hero,
+            .middle {
+                grid-template-columns: 1fr;
+            }
+
+            .level-track {
+                overflow-x: auto;
+
+                justify-content: flex-start;
+
+                gap: 25px;
+
+                padding-bottom: 10px;
+            }
+
+            .track-line,
+            .track-line-fill {
+                display: none;
+            }
+
+            .level-step {
+                flex: 0 0 70px;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            body {
+                padding: 15px 12px 30px;
+            }
+
+            .brand-mark {
+                width: 37px;
+                height: 37px;
+            }
+
+            h1 {
+                font-size: 27px;
+            }
+
+            .run-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .model-select,
+            .run-button {
+                width: 100%;
+            }
+
+            .journey {
+                padding: 22px 18px;
+            }
+
+            .journey-top {
+                margin-bottom: 25px;
+            }
+
+            .journey-status {
+                display: none;
+            }
+
+            .score-area {
+                align-items: flex-start;
+                flex-direction: column;
+
+                gap: 17px;
+            }
+
+            .score-info {
+                border-left: none;
+
+                border-top: 1px solid var(--line);
+
+                padding-left: 0;
+                padding-top: 13px;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .scenario-title {
+                font-size: 22px;
+            }
+
+            .results-table th:nth-child(2),
+            .results-table td:nth-child(2) {
+                display: none;
+            }
+
+            .footer {
+                flex-direction: column;
+                gap: 6px;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+
+    <!-- =========================================================
+         HEADER
+    ========================================================== -->
+
+    <header class="topbar">
+
+        <div class="brand-area">
+
+            <div class="brand-mark">A</div>
+
+            <div>
+                <div class="eyebrow">
+                    AGENT SECURITY / EVALUATION LAB
+                </div>
+
+                <h1>AgentShield</h1>
+
+                <div class="description">
+                    Controlled prompt-injection testing environment
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="run-controls">
+
+            <select id="modelSelect" class="model-select">
+
+                <option value="openai/gpt-oss-120b">
+                    GPT OSS 120B
+                </option>
+
+                <option value="openai/gpt-oss-20b">
+                    GPT OSS 20B
+                </option>
+
+                <option value="qwen/qwen3.6-27b">
+                    Qwen 3.6 27B
+                </option>
+
+                <option value="qwen/qwen3.8-27b">
+                    Qwen 3.8 27B
+                </option>
+
+            </select>
+
+
+            <button id="runButton" class="run-button">
+                ▶ &nbsp; RUN EVALUATION
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <main class="page">
+
+
+        <!-- =====================================================
+             ROBOT JOURNEY
+        ====================================================== -->
+
+        <section class="journey">
+
+            <div class="journey-top">
+
+                <div>
+
+                    <div class="journey-title">
+                        Security Challenge
+                    </div>
+
+                    <div class="journey-subtitle">
+                        Your agent moves through each attack scenario.
+                        Every checkpoint records the outcome.
+                    </div>
+
+                </div>
+
+                <div class="journey-status">
+                    <span class="status-dot"></span>
+                    LIVE EVALUATION
+                </div>
+
+            </div>
+
+
+            <div class="level-track" id="levelTrack">
+
+                <div class="track-line"></div>
+
+                <div class="track-line-fill" id="trackFill">
+                </div>
+
+                <!-- Steps injected by JavaScript -->
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             SCORE + SUMMARY
+        ====================================================== -->
+
+        <section class="hero">
+
+
+            <!-- SCORE -->
+
+            <div class="panel score-panel">
+
+                <div class="section-label">
+                    RESISTANCE SCORE
+                </div>
+
+
+                <div class="score-area">
+
+                    <div>
+
+                        <span id="resistance" class="score">
+                            0
+                        </span>
+
+                        <span class="score-symbol">
+                            %
+                        </span>
+
+                    </div>
+
+
+                    <div class="score-info">
+
+                        <div id="scoreStatus" class="score-status">
+                            ● Awaiting evaluation
+                        </div>
+
+                        <div class="score-note">
+                            Percentage of attack scenarios successfully
+                            resisted by the evaluated agent.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="progress">
+
+                    <div id="progressFill" class="progress-fill">
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- SUMMARY -->
+
+            <div class="panel summary-panel">
+
+                <div class="section-label">
+                    RUN SUMMARY
+                </div>
+
+
+                <div class="summary-grid">
+
+                    <div class="summary-item">
+
+                        <div id="total" class="summary-value">
+                            0
+                        </div>
+
+                        <div class="summary-name">
+                            SCENARIOS
+                        </div>
+
+                    </div>
+
+
+                    <div class="summary-item">
+
+                        <div id="passed" class="summary-value pass">
+                            0
+                        </div>
+
+                        <div class="summary-name">
+                            PASSED
+                        </div>
+
+                    </div>
+
+
+                    <div class="summary-item">
+
+                        <div id="failed" class="summary-value fail">
+                            0
+                        </div>
+
+                        <div class="summary-name">
+                            FAILED
+                        </div>
+
+                    </div>
+
+
+                    <div class="summary-item">
+
+                        <div id="status" class="summary-value">
+                            —
+                        </div>
+
+                        <div class="summary-name">
+                            CONNECTION
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             CURRENT SCENARIO + TRACE
+        ====================================================== -->
+
+        <section class="middle">
+
+
+            <!-- CURRENT SCENARIO -->
+
+            <div class="panel scenario-panel">
+
+                <div class="section-label">
+
+                    CURRENT SCENARIO
+
+                    <span id="scenarioNumber" class="scenario-number">
+                        —
+                    </span>
+
+                </div>
+
+
+                <div id="scenarioTitle" class="scenario-title">
+                    No active scenario
+                </div>
+
+
+                <div id="difficulty" class="difficulty">
+                    WAITING
+                </div>
+
+
+                <div id="categories" class="tags">
+                </div>
+
+
+                <div class="scenario-result">
+
+                    <div id="result" class="result-text">
+                        Awaiting evaluation...
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- LIVE TRACE -->
+
+            <div class="panel trace-panel">
+
+                <div class="trace-header">
+
+                    <div class="section-label">
+                        LIVE AGENT TRACE
+                    </div>
+
+                    <div class="trace-live">
+                        STREAMING
+                    </div>
+
+                </div>
+
+
+                <div id="activity" class="trace">
+
+                    <div class="trace-line">
+
+                        <span class="trace-time">
+                            --:--
+                        </span>
+
+                        <span class="trace-event">
+                            Waiting for evaluation...
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             RESULTS TABLE
+        ====================================================== -->
+
+        <section class="panel results-panel">
+
+            <div class="results-header">
+
+                <div class="section-label">
+                    SCENARIO RESULTS
+                </div>
+
+                <div id="resultsCount" class="results-count">
+                    0 evaluated
+                </div>
+
+            </div>
+
+
+            <table class="results-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            SCENARIO
+                        </th>
+
+                        <th>
+                            ATTACK TYPE
+                        </th>
+
+                        <th>
+                            RESULT
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="scenarioResults">
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             CATEGORY BREAKDOWN
+        ====================================================== -->
+
+        <section class="panel category-panel">
+
+            <div class="section-label">
+                ATTACK CATEGORY BREAKDOWN
+            </div>
+
+
+            <div id="categoryBreakdown" class="category-grid">
+
+                <!-- Filled by JavaScript -->
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =========================================================
+         FOOTER
+    ========================================================== -->
+
+    <footer class="footer">
+
+        <span>
+            AGENTSHIELD / LOCAL SECURITY EVALUATION
+        </span>
+
+        <span>
+            v0.2 · MODEL COMPARISON
+        </span>
+
+    </footer>
+
+
+
+    <!-- =========================================================
+         JAVASCRIPT
+    ========================================================== -->
+
+    <script>
+
+
+        // =========================================================
+        // ELEMENTS
+        // =========================================================
+
+        const status =
+            document.getElementById("status");
+
+        const runButton =
+            document.getElementById("runButton");
+
+        const modelSelect =
+            document.getElementById("modelSelect");
+
+        const total =
+            document.getElementById("total");
+
+        const passed =
+            document.getElementById("passed");
+
+        const failed =
+            document.getElementById("failed");
+
+        const resistance =
+            document.getElementById("resistance");
+
+        const progressFill =
+            document.getElementById("progressFill");
+
+        const scoreStatus =
+            document.getElementById("scoreStatus");
+
+        const scenarioTitle =
+            document.getElementById("scenarioTitle");
+
+        const scenarioNumber =
+            document.getElementById("scenarioNumber");
+
+        const difficulty =
+            document.getElementById("difficulty");
+
+        const categories =
+            document.getElementById("categories");
+
+        const result =
+            document.getElementById("result");
+
+        const activity =
+            document.getElementById("activity");
+
+        const scenarioResults =
+            document.getElementById("scenarioResults");
+
+        const resultsCount =
+            document.getElementById("resultsCount");
+
+        const levelTrack =
+            document.getElementById("levelTrack");
+
+        const trackFill =
+            document.getElementById("trackFill");
+
+        const categoryBreakdown =
+            document.getElementById("categoryBreakdown");
+
+
+
+        // =========================================================
+        // STATE
+        // =========================================================
+
+        let scenarioData = {};
+
+        let evaluatedCount = 0;
+
+        let totalScenarios = 8;
+
+
+
+        // =========================================================
+        // CATEGORY NAMES
+        // =========================================================
+
+        const CATEGORY_NAMES = {
+
+            "indirect":
+                "Indirect Injection",
+
+            "obfuscation":
+                "Obfuscation",
+
+            "tool_manipulation":
+                "Tool Manipulation",
+
+            "data_exfiltration":
+                "Data Exfiltration",
+
+            "authority_spoofing":
+                "Authority Spoofing",
+
+            "instruction_hierarchy":
+                "Instruction Hierarchy",
+
+            "task_hijacking":
+                "Task Hijacking"
+
+        };
+
+
+
+        // =========================================================
+        // BUILD LEVEL TRACK
+        // =========================================================
+
+        function buildLevelTrack(count) {
+
+            levelTrack
+                .querySelectorAll(".level-step")
+                .forEach(el => el.remove());
+
+
+            for (let i = 0; i < count; i++) {
+
+                const step =
+                    document.createElement("div");
+
+                step.className = "level-step";
+
+
+                const dot =
+                    document.createElement("div");
+
+                dot.className = "level-dot";
+
+                dot.id = `dot-${i + 1}`;
+
+
+                dot.innerHTML = `
+                    <span>
+                        ${String(i + 1).padStart(2, "0")}
+                    </span>
+
+                    <span class="agent-icon">
+                        🤖
+                    </span>
+                `;
+
+
+                const label =
+                    document.createElement("div");
+
+                label.className = "level-label";
+
+                label.textContent =
+                    `L${String(i + 1).padStart(2, "0")}`;
+
+
+                step.appendChild(dot);
+
+                step.appendChild(label);
+
+                levelTrack.appendChild(step);
+
+            }
+
+
+            updateTrackFill();
+
+        }
+
+
+
+        // =========================================================
+        // TRACK PROGRESS
+        // =========================================================
+
+        function updateTrackFill() {
+
+            if (totalScenarios === 0)
+                return;
+
+
+            const progress =
+                evaluatedCount / totalScenarios;
+
+
+            /*
+                The original tracker starts at the first
+                checkpoint and fills toward the last one.
+            */
+
+            const percentage =
+                Math.min(progress * 100, 100);
+
+
+            trackFill.style.width =
+                percentage + "%";
+
+        }
+
+
+
+        // =========================================================
+        // LEVEL DOT
+        // =========================================================
+
+        function updateLevelDot(index, state) {
+
+            const dot =
+                document.getElementById(`dot-${index}`);
+
+
+            if (!dot)
+                return;
+
+
+            dot.classList.remove(
+                "active",
+                "pass",
+                "fail"
+            );
+
+
+            if (state === "active") {
+
+                dot.classList.add("active");
+
+            }
+
+            else if (state === "pass") {
+
+                dot.classList.add("pass");
+
+            }
+
+            else if (state === "fail") {
+
+                dot.classList.add("fail");
+
+            }
+
+        }
+
+
+
+        // =========================================================
+        // WEBSOCKET
+        // =========================================================
+
+        const socket =
+            new WebSocket(
+                `ws://${window.location.host}/ws`
+            );
+
+
+        socket.onopen = function () {
+
+            status.textContent =
+                "ONLINE";
+
+            document
+                .querySelector(
+                    ".summary-item:last-child .summary-value"
+                )
+                .textContent =
+                "ONLINE";
+
+        };
+
+
+        socket.onclose = function () {
+
+            status.textContent =
+                "OFFLINE";
+
+            document
+                .querySelector(
+                    ".summary-item:last-child .summary-value"
+                )
+                .textContent =
+                "OFFLINE";
+
+        };
+
+
+        socket.onerror = function () {
+
+            status.textContent =
+                "ERROR";
+
+            document
+                .querySelector(
+                    ".summary-item:last-child .summary-value"
+                )
+                .textContent =
+                "ERROR";
+
+        };
+
+
+
+        // =========================================================
+        // MESSAGE HANDLER
+        // =========================================================
+
+        socket.onmessage = function (event) {
+
+            const data =
+                JSON.parse(event.data);
+
+
+            console.log(
+                "[AgentShield]",
+                data
+            );
+
+
+
+            // =====================================================
+            // RUN STARTED
+            // =====================================================
+
+            if (data.event === "run.started") {
+
+                evaluatedCount = 0;
+
+                scenarioData = {};
+
+                scenarioResults.innerHTML = "";
+
+                resultsCount.textContent =
+                    "0 evaluated";
+
+                updateTrackFill();
+
+
+                for (
+                    let i = 1;
+                    i <= totalScenarios;
+                    i++
+                ) {
+
+                    updateLevelDot(i, "");
+
+                }
+
+
+                categoryBreakdown.innerHTML = "";
+
+
+                total.textContent = "0";
+
+                passed.textContent = "0";
+
+                failed.textContent = "0";
+
+                resistance.textContent = "0";
+
+                progressFill.style.width = "0%";
+
+                scoreStatus.textContent =
+                    "● Evaluation running";
+
+            }
+
+
+
+            // =====================================================
+            // SCENARIO STARTED
+            // =====================================================
+
+            else if (
+                data.event === "scenario.started"
+            ) {
+
+                const scenario =
+                    data.data;
+
+
+                scenarioData[
+                    data.scenario_id
+                ] = scenario;
+
+
+                scenarioTitle.textContent =
+                    scenario.title;
+
+
+                difficulty.textContent =
+                    scenario.difficulty;
+
+
+                categories.innerHTML = "";
+
+
+                scenario.categories.forEach(
+                    cat => {
+
+                        const tag =
+                            document.createElement(
+                                "span"
+                            );
+
+                        tag.className =
+                            "tag";
+
+                        tag.textContent =
+                            cat;
+
+                        categories.appendChild(tag);
+
+                    }
+                );
+
+
+                result.textContent =
+                    "● Scenario in progress";
+
+                result.className =
+                    "result-text";
+
+
+                addTrace(
+                    "SCENARIO.STARTED",
+                    scenario.title
+                );
+
+
+                const currentNumber =
+                    evaluatedCount + 1;
+
+
+                scenarioNumber.textContent =
+                    "#" +
+                    String(currentNumber)
+                        .padStart(2, "0");
+
+
+                /*
+                    Move the robot to the current
+                    scenario checkpoint.
+                */
+
+                updateLevelDot(
+                    currentNumber,
+                    "active"
+                );
+
+            }
+
+
+
+            // =====================================================
+            // TOOL CALLED
+            // =====================================================
+
+            else if (
+                data.event === "tool.called"
+            ) {
+
+                addTrace(
+                    "TOOL.CALLED",
+                    data.data.tool
+                );
+
+            }
+
+
+
+            // =====================================================
+            // TOOL RESULT
+            // =====================================================
+
+            else if (
+                data.event === "tool.result"
+            ) {
+
+                addTrace(
+                    "TOOL.RESULT",
+                    data.data.poisoned
+                        ? "poisoned content received"
+                        : "result received"
+                );
+
+            }
+
+
+
+            // =====================================================
+            // AGENT RESPONSE
+            // =====================================================
+
+            else if (
+                data.event === "agent.response"
+            ) {
+
+                addTrace(
+                    "AGENT.RESPONSE",
+                    "final response generated"
+                );
+
+            }
+
+
+
+            // =====================================================
+            // SCENARIO COMPLETED
+            // =====================================================
+
+            else if (
+                data.event === "scenario.completed"
+            ) {
+
+                const scenarioResult =
+                    data.data.result;
+
+
+                const scenario =
+                    scenarioData[
+                    data.scenario_id
+                    ];
+
+
+                evaluatedCount++;
+
+
+                const currentNumber =
+                    evaluatedCount;
+
+
+                if (
+                    scenarioResult === "PASS"
+                ) {
+
+                    result.textContent =
+                        "● INJECTION RESISTED";
+
+                    result.className =
+                        "result-text pass";
+
+
+                    updateLevelDot(
+                        currentNumber,
+                        "pass"
+                    );
+
+                }
+
+                else {
+
+                    result.textContent =
+                        "● INJECTION SUCCEEDED";
+
+                    result.className =
+                        "result-text fail";
+
+
+                    updateLevelDot(
+                        currentNumber,
+                        "fail"
+                    );
+
+                }
+
+
+                addTrace(
+                    "SCENARIO.COMPLETED",
+                    scenarioResult
+                );
+
+
+                addScenarioResult(
+                    scenario,
+                    scenarioResult
+                );
+
+
+                resultsCount.textContent =
+                    evaluatedCount +
+                    " evaluated";
+
+
+                updateTrackFill();
+
+            }
+
+
+
+            // =====================================================
+            // RUN COMPLETED
+            // =====================================================
+
+            else if (
+                data.event === "run.completed"
+            ) {
+
+                const run =
+                    data.data;
+
+
+                total.textContent =
+                    run.total;
+
+
+                totalScenarios =
+                    run.total;
+
+
+                passed.textContent =
+                    run.passed;
+
+
+                failed.textContent =
+                    run.failed;
+
+
+                resistance.textContent =
+                    run.resistance.toFixed(1);
+
+
+                progressFill.style.width =
+                    run.resistance + "%";
+
+
+                if (
+                    run.resistance === 100
+                ) {
+
+                    scoreStatus.textContent =
+                        "● Full resistance";
+
+                }
+
+                else if (
+                    run.resistance >= 70
+                ) {
+
+                    scoreStatus.textContent =
+                        "● Strong resistance";
+
+                }
+
+                else {
+
+                    scoreStatus.textContent =
+                        "● Vulnerability detected";
+
+                }
+
+
+                renderCategoryBreakdown(
+                    run.category_breakdown || {}
+                );
+
+
+                runButton.disabled =
+                    false;
+
+
+                runButton.textContent =
+                    "▶  RUN EVALUATION";
+
+            }
+
+        };
+
+
+
+        // =========================================================
+        // TRACE
+        // =========================================================
+
+        function addTrace(
+            eventName,
+            message
+        ) {
+
+            const line =
+                document.createElement("div");
+
+
+            line.className =
+                "trace-line";
+
+
+            const now =
+                new Date();
+
+
+            const time =
+                now.toLocaleTimeString(
+                    [],
+                    {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit"
+                    }
+                );
+
+
+            line.innerHTML = `
+
+                <span class="trace-time">
+                    ${time}
+                </span>
+
+                <span class="trace-event">
+                    ${eventName}
+                    &nbsp;—&nbsp;
+                    ${message}
+                </span>
+
+            `;
+
+
+            activity.appendChild(line);
+
+
+            activity.scrollTop =
+                activity.scrollHeight;
+
+        }
+
+
+
+        // =========================================================
+        // RESULTS TABLE
+        // =========================================================
+
+        function addScenarioResult(
+            scenario,
+            scenarioResult
+        ) {
+
+            const row =
+                document.createElement("tr");
+
+
+            const name =
+                document.createElement("td");
+
+
+            name.textContent =
+                scenario
+                    ? scenario.title
+                    : "Unknown";
+
+
+            const attack =
+                document.createElement("td");
+
+
+            attack.textContent =
+                scenario
+                    ? scenario.categories.join(" / ")
+                    : "—";
+
+
+            const resultCell =
+                document.createElement("td");
+
+
+            resultCell.textContent =
+                scenarioResult;
+
+
+            resultCell.className =
+                scenarioResult === "PASS"
+                    ? "status-pass"
+                    : "status-fail";
+
+
+            row.appendChild(name);
+
+            row.appendChild(attack);
+
+            row.appendChild(resultCell);
+
+
+            scenarioResults.appendChild(row);
+
+        }
+
+
+
+        // =========================================================
+        // CATEGORY BREAKDOWN
+        // =========================================================
+
+        function renderCategoryBreakdown(
+            categoryData
+        ) {
+
+            const container =
+                categoryBreakdown;
+
+
+            container.innerHTML = "";
+
+
+            if (
+                !categoryData ||
+                Object.keys(categoryData).length === 0
+            ) {
+
+                container.innerHTML = `
+                    <div
+                        style="
+                            color: var(--muted);
+                            font-size: 10px;
+                        "
+                    >
+                        No category data available.
+                    </div>
+                `;
+
+                return;
+
+            }
+
+
+
+            for (
+                const [name, stats]
+                of Object.entries(categoryData)
+            ) {
+
+                const rate =
+                    stats.rate || 0;
+
+
+                let color;
+
+
+                if (rate >= 70) {
+
+                    color =
+                        "var(--sage-dark)";
+
+                }
+
+                else if (rate >= 40) {
+
+                    color =
+                        "var(--yellow)";
+
+                }
+
+                else {
+
+                    color =
+                        "var(--coral-dark)";
+
+                }
+
+
+                const displayName =
+                    CATEGORY_NAMES[name] || name;
+
+
+                const item =
+                    document.createElement("div");
+
+
+                item.className =
+                    "category-item";
+
+
+                item.innerHTML = `
+
+                    <div class="category-name">
+                        ${displayName}
+                    </div>
+
+                    <div
+                        class="category-rate"
+                        style="color: ${color};"
+                    >
+                        ${rate}%
+                    </div>
+
+                    <div class="category-bar">
+
+                        <div
+                            class="category-bar-fill"
+                            style="
+                                width: ${rate}%;
+                                background: ${color};
+                            "
+                        ></div>
+
+                    </div>
+
+                    <div class="category-detail">
+                        ${stats.passed}/${stats.total}
+                        passed
+                    </div>
+
+                `;
+
+
+                container.appendChild(item);
+
+            }
+
+        }
+
+
+
+        // =========================================================
+        // INIT
+        // =========================================================
+
+        buildLevelTrack(8);
+
+        totalScenarios = 8;
+
+
+
+        // =========================================================
+        // RUN BUTTON
+        // =========================================================
+
+        runButton.onclick =
+            async function () {
+
+
+                runButton.disabled =
+                    true;
+
+
+                runButton.textContent =
+                    "⏳  EVALUATING";
+
+
+                evaluatedCount =
+                    0;
+
+
+                total.textContent =
+                    "0";
+
+
+                passed.textContent =
+                    "0";
+
+
+                failed.textContent =
+                    "0";
+
+
+                resistance.textContent =
+                    "0";
+
+
+                progressFill.style.width =
+                    "0%";
+
+
+                scoreStatus.textContent =
+                    "● Evaluation running";
+
+
+                scenarioResults.innerHTML =
+                    "";
+
+
+                activity.innerHTML =
+                    "";
+
+
+                for (
+                    let i = 1;
+                    i <= totalScenarios;
+                    i++
+                ) {
+
+                    updateLevelDot(i, "");
+
+                }
+
+
+                trackFill.style.width =
+                    "0%";
+
+
+                scenarioTitle.textContent =
+                    "No active scenario";
+
+
+                difficulty.textContent =
+                    "WAITING";
+
+
+                categories.innerHTML =
+                    "";
+
+
+                result.textContent =
+                    "Awaiting evaluation...";
+
+
+                result.className =
+                    "result-text";
+
+
+                scenarioNumber.textContent =
+                    "—";
+
+
+                categoryBreakdown.innerHTML =
+                    "";
+
+
+                const selectedModel =
+                    modelSelect.value;
+
+
+                try {
+
+                    await fetch(
+                        `/run?model=${encodeURIComponent(
+                            selectedModel
+                        )}`,
+                        {
+                            method: "POST"
+                        }
+                    );
+
+                }
+
+                catch (error) {
+
+                    console.error(error);
+
+
+                    runButton.disabled =
+                        false;
+
+
+                    runButton.textContent =
+                        "▶  RUN EVALUATION";
+
+                }
+
+            };
+
+
+    </script>
+
+</body>
+
+</html>
